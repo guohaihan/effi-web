@@ -1,6 +1,6 @@
 import defaultSettings from '@/settings'
 
-const title = defaultSettings.title || 'DRF Admin'
+const title = defaultSettings.title || '效率平台'
 
 export default function getPageTitle(pageTitle) {
   if (pageTitle) {

@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'DRF Admin',
+  title: '效率平台',
 
   /**
    * @type {boolean} true | false

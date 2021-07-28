@@ -262,18 +262,18 @@ export const asyncRoutes = [
         icon: 'server',
         noCache: true
       }
-    },
-
-    {
-      path: 'database',
-      component: () => import('@/views/cmdb/databases'),
-      name: 'cmdb-databases',
-      meta: {
-        title: '数据库',
-        icon: 'database',
-        noCache: true
-      }
     }
+
+    // {
+    //   path: 'database',
+    //   component: () => import('@/views/cmdb/databases'),
+    //   name: 'cmdb-databases',
+    //   meta: {
+    //     title: '数据库',
+    //     icon: 'database',
+    //     noCache: true
+    //   }
+    // }
       // {
       //   path: 'storage',
       //   component: () => import('@/views/monitor/error'),
@@ -286,6 +286,56 @@ export const asyncRoutes = [
       //   name: 'cmdb-security',
       //   meta: { title: '安全设备', icon: 'security', noCache: true }
       // }
+    ]
+  },
+
+  // 数据库系统
+  {
+    path: '/dbms',
+    component: Layout,
+    redirect: 'noRedirect',
+    alwaysShow: true,
+    name: 'dbms',
+    meta: {
+      permissions: ['admin', 'dbms'],
+      title: '数据库',
+      icon: 'database'
+    },
+    children: [
+      {
+        path: 'database',
+        component: () => import('@/views/dbms/databases'),
+        name: 'dbms-databases',
+        meta: {
+          title: '数据库管理',
+          icon: 'database',
+          noCache: true
+        }
+      },
+      {
+
+        path: 'crud',
+        component: () => import('@/views/dbms/crud'),
+        name: 'dbms-crud',
+        meta: {
+          title: '数据库执行',
+          icon: 'skill',
+          noCache: true
+        }
+
+      }
+    // {
+    //   path: 'storage',
+    //   component: () => import('@/views/monitor/error'),
+    //   name: 'cmdb-storage',
+    //   meta: { title: '存储设备', icon: 'storage', noCache: true }
+    // },
+    // {
+    //   path: 'security',
+    //   component: () => import('@/views/monitor/service'),
+    //   name: 'cmdb-security',
+    //   meta: { title: '安全设备', icon: 'security', noCache: true }
+    // }
     ]
   },
 

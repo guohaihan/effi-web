@@ -19,8 +19,8 @@
         <el-button type="warning" icon="el-icon-refresh-left" size="medium" @click="resetForm()">重置</el-button>
       </el-form-item>
     </el-form>
-    <el-button v-permission="['admin','cmdb-databases-add']" type="primary" style="margin-bottom:20px" icon="el-icon-plus" size="medium" @click="createDatabase()">新增</el-button>
-    <el-button v-permission="['admin','cmdb-databases-mdel']" type="danger" icon="el-icon-delete" :disabled="multipleSelection.length ? false : true" size="medium" @click="deleteDatabases(form)">删除</el-button>
+    <el-button v-permission="['admin','dbms-databases-add']" type="primary" style="margin-bottom:20px" icon="el-icon-plus" size="medium" @click="createDatabase()">新增</el-button>
+    <el-button v-permission="['admin','dbms-databases-mdel']" type="danger" icon="el-icon-delete" :disabled="multipleSelection.length ? false : true" size="medium" @click="deleteDatabases(form)">删除</el-button>
     <el-table
       ref="table"
       :data="tableData"
@@ -35,22 +35,22 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="所在机房">
+            <el-form-item label="数据库名称">
               <span>{{ props.row.idc }}</span>
             </el-form-item>
-            <el-form-item label="所在机柜">
+            <el-form-item label="环境">
               <span>{{ props.row.cabinet_display }}</span>
             </el-form-item>
-            <el-form-item label="用途">
+            <el-form-item label="IP">
               <span>{{ props.row.server.use }}</span>
             </el-form-item>
-            <el-form-item label="备注">
+            <el-form-item label="数据库类型">
               <span>{{ props.row.memo }}</span>
             </el-form-item>
-            <el-form-item label="系统类型">
+            <el-form-item label="数据库版本">
               <span>{{ props.row.server.server_system_type_display }}</span>
             </el-form-item>
-            <el-form-item label="系统版本">
+            <el-form-item label="用途">
               <span>{{ props.row.server.model }}</span>
             </el-form-item>
             <el-form-item label="用户">
@@ -140,7 +140,7 @@
 </template>
 <script>
 import cuForm from './components/dbForm'
-import { getDatabases, deleteDatabase, deleteDatabases } from '@/api/cmdb/databases'
+import { getDatabases, deleteDatabase, deleteDatabases } from '@/api/dbms/databases'
 // import { getAssetsStatus } from '@/api/cmdb/assets'
 export default {
   name: 'Permissions',

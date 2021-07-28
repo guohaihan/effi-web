@@ -131,8 +131,8 @@
   </el-dialog>
 </template>
 <script>
-import { createDatabase, updateDatabase, getDatabase, getDatabaseType } from '@/api/cmdb/databases'
-import { getAssetsAdmin, getIDCCabinetsTree } from '@/api/cmdb/assets'
+import { createDatabase, updateDatabase, getDatabase, getDatabaseType } from '@/api/dbms/databases'
+import { getAssetsAdmin, getIDCCabinetsTree } from '@/api/dbms/assets'
 import { validateIP } from '@/utils/rulesValidate'
 export default {
   name: 'DbForm',

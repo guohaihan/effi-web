@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 新增数据库
 export function createDatabase(data) {
   return request({
-    url: '/cmdb/databases/',
+    url: '/dbms/operation_log/accounts',
     method: 'post',
     data
   })
@@ -12,7 +12,7 @@ export function createDatabase(data) {
 // 删除数据库
 export function deleteDatabase(id) {
   return request({
-    url: `/cmdb/databases/${id}/`,
+    url: `/dbms/operation_log/accounts/${id}/`,
     method: 'delete'
   })
 }
@@ -20,7 +20,7 @@ export function deleteDatabase(id) {
 // 批量删除数据库
 export function deleteDatabases(ids) {
   return request({
-    url: '/cmdb/databases/',
+    url: '/dbms/operation_log/accounts/',
     method: 'delete',
     data: { 'ids': ids }
   })
@@ -29,7 +29,7 @@ export function deleteDatabases(ids) {
 // 修改数据库
 export function updateDatabase(id, data) {
   return request({
-    url: `/cmdb/servers/${id}/`,
+    url: `/dbms/operation_log/accounts/${id}/`,
     method: 'put',
     data
   })
@@ -38,7 +38,7 @@ export function updateDatabase(id, data) {
 // 获取数据库列表
 export function getDatabases(data) {
   return request({
-    url: '/cmdb/database/',
+    url: '/dbms/operation_log/accounts/',
     method: 'get',
     params: data
   })
@@ -47,7 +47,7 @@ export function getDatabases(data) {
 // 获取数据库详情
 export function getDatabase(id) {
   return request({
-    url: `/cmdb/servers/${id}/`,
+    url: `/dbms/operation_log/accounts//${id}/`,
     method: 'get'
   })
 }
@@ -55,7 +55,7 @@ export function getDatabase(id) {
 // 获取数据库类型列表
 export function getDatabaseType() {
   return request({
-    url: '/cmdb/databases/type/',
+    url: '/dbms/operation_log/type/',
     method: 'get'
   })
 }

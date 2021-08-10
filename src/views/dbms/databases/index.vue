@@ -4,16 +4,6 @@
       <el-form-item prop="search">
         <el-input v-model="form.search" clearable style="width:320px" prefix-icon="el-icon-search" placeholder="输入数据库名称、IP搜索" />
       </el-form-item>
-      <!-- <el-form-item prop="asset_status">
-        <el-select v-model="form.asset_status" style="width:120px" clearable placeholder="状态">
-          <el-option
-            v-for="item in statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item> -->
       <el-form-item>
         <el-button type="success" icon="el-icon-search" size="medium" @click="search(form)">搜索</el-button>
         <el-button type="warning" icon="el-icon-refresh-left" size="medium" @click="resetForm()">重置</el-button>
@@ -36,83 +26,58 @@
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="数据库名称">
-              <span>{{ props.row.idc }}</span>
+              <span>{{ props.row.database_name }}</span>
             </el-form-item>
             <el-form-item label="环境">
-              <span>{{ props.row.cabinet_display }}</span>
+              <span>{{ props.row.environment }}</span>
             </el-form-item>
             <el-form-item label="IP">
-              <span>{{ props.row.server.use }}</span>
+              <span>{{ props.row.host }}</span>
             </el-form-item>
             <el-form-item label="数据库类型">
-              <span>{{ props.row.memo }}</span>
+              <span>{{ props.row.database_type }}</span>
             </el-form-item>
             <el-form-item label="数据库版本">
-              <span>{{ props.row.server.server_system_type_display }}</span>
+              <span>{{ props.row.database_version }}</span>
             </el-form-item>
             <el-form-item label="用途">
-              <span>{{ props.row.server.model }}</span>
+              <span>{{ props.row.function }}</span>
             </el-form-item>
             <el-form-item label="用户">
-              <span v-for="(item,index) in props.row.server.accounts" :key="item.id">{{ index+1 }}、{{ item.username }}/{{ item.password }}/{{ item.port }}   </span>
+              <span>{{ props.row.username }}/{{ props.row.port }}   </span>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
       <el-table-column
         label="数据库名称"
-        prop="name"
+        prop="database_name"
         min-width="100"
         show-overflow-tooltip
       />
-      <!-- <el-table-column
-        label="设备编号"
-        prop="sn"
-        show-overflow-tooltip
-      /> -->
       <el-table-column
-        label="类型"
-        prop="server.server_type_display"
+        label="环境"
+        prop="environment"
         show-overflow-tooltip
-      >
-        <template slot-scope="{row}">
-          <el-tag v-if="row.server.server_type==='pm'" effect="plain">{{ row.server.server_type_display }}</el-tag>
-          <el-tag v-else type="success" effect="plain">{{ row.server.server_type_display }}</el-tag>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column
-        label="系统"
-        prop="server.server_system_type_display"
-        show-overflow-tooltip
-      /> -->
-      <!-- <el-table-column
-        label="服务器状态"
-        min-width="100"
-        show-overflow-tooltip
-      >
-        <template slot-scope="{row}">
-          <el-tag v-if="row.asset_status===0">{{ row.asset_status_display }}</el-tag>
-          <el-tag v-else-if="row.asset_status===1" type="success">{{ row.asset_status_display }}</el-tag>
-          <el-tag v-else-if="row.asset_status===2" type="info">{{ row.asset_status_display }}</el-tag>
-          <el-tag v-else-if="row.asset_status===3" type="danger">{{ row.asset_status_display }}</el-tag>
-          <el-tag v-else type="warning">{{ row.asset_status_display }}</el-tag>
-        </template>
-      </el-table-column> -->
+      />
+
       <el-table-column
         label="IP"
-        prop="manage_ip"
+        prop="host"
         show-overflow-tooltip
       />
+
       <el-table-column
-        label="管理员"
-        prop="admin_display"
+        label="数据库类型"
+        prop="database_type"
         show-overflow-tooltip
-      />
-      <!-- <el-table-column
-        label="到期时间"
-        prop="expire_day"
-        show-overflow-tooltip
-      /> -->
+      >
+        <!-- <template slot-scope="{row}">
+          <el-tag v-if="row.server.server_type==='pm'" effect="plain">{{ row.server.server_type_display }}</el-tag>
+          <el-tag v-else type="success" effect="plain">{{ row.server.server_type_display }}</el-tag>
+        </template> -->
+      </el-table-column>
+
       <el-table-column
         fixed="right"
         align="center"
@@ -135,16 +100,16 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <cuForm :dialog-visible="cuDialogVisible" :cur-id="curId" :status-options="statusOptions" @close="close" @search="search" />
+    <DbForm :dialog-visible="cuDialogVisible" :cur-id="curId" :status-options="statusOptions" @close="close" @search="search" />
   </div>
 </template>
 <script>
-import cuForm from './components/dbForm'
+import DbForm from './components/dbForm'
 import { getDatabases, deleteDatabase, deleteDatabases } from '@/api/dbms/databases'
 // import { getAssetsStatus } from '@/api/cmdb/assets'
 export default {
   name: 'Permissions',
-  components: { cuForm },
+  components: { DbForm },
   data() {
     return {
       form: {
@@ -158,7 +123,6 @@ export default {
       total: 0,
       statusOptions: [],
       multipleSelection: [],
-      // cuForm数据
       cuDialogVisible: false,
       curId: null
     }
@@ -172,15 +136,9 @@ export default {
     search() {
       getDatabases(this.form).then(res => {
         this.tableData = res.data.results
-        this.total = res.data.count
+        // this.total = res.data.count
       })
     },
-    // 获取服务器资产状态列表
-    // getAssetsStatus() {
-    //   getAssetsStatus().then(res => {
-    //     this.statusOptions = res.data.results
-    //   })
-    // },
     // 重置
     resetForm() {
       this.$refs.form.resetFields()
@@ -226,7 +184,7 @@ export default {
       this.$refs.table.selection.forEach(data => deleteIds.push(data.id))
       this.multipleSelection = deleteIds
     },
-    // cuForm子组件
+    // DbForm子组件
     createDatabase() {
       this.cuDialogVisible = true
     },

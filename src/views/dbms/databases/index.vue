@@ -14,6 +14,7 @@
     <el-table
       ref="table"
       :data="tableData"
+
       style="width: 100%; margin-bottom: 20px;"
       row-key="id"
       @selection-change="handleSelectionChange"
@@ -26,50 +27,53 @@
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="数据库名称">
-              <span>{{ props.row.database_name }}</span>
+              <span>{{ props.row.db_name }}</span>
             </el-form-item>
             <el-form-item label="环境">
-              <span>{{ props.row.environment }}</span>
+              <span>{{ props.row.env }}</span>
+              <!-- <span v-else-if="props.row.db_env==='1'">测试</span>
+              <span v-else-if="props.row.db_env==='2'">开发</span>
+              <span v-else-if="props.row.db_env==='3'">演示</span> -->
+              <!-- <span v-else>验收</span> -->
             </el-form-item>
             <el-form-item label="IP">
-              <span>{{ props.row.host }}</span>
+              <span>{{ props.row.db_ip }}</span>
             </el-form-item>
             <el-form-item label="数据库类型">
-              <span>{{ props.row.database_type }}</span>
+              <span>{{ props.row.type }}</span>
             </el-form-item>
             <el-form-item label="数据库版本">
-              <span>{{ props.row.database_version }}</span>
+              <span>{{ props.row.db_version }}</span>
             </el-form-item>
-            <el-form-item label="用途">
-              <span>{{ props.row.function }}</span>
+            <el-form-item label="备注">
+              <span>{{ props.row.db_mark }}</span>
             </el-form-item>
             <el-form-item label="用户">
-              <span>{{ props.row.username }}/{{ props.row.port }}   </span>
+              <span>{{ props.row.db_username }}/{{ props.row.db_port }}   </span>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
       <el-table-column
         label="数据库名称"
-        prop="database_name"
+        prop="db_name"
         min-width="100"
         show-overflow-tooltip
       />
       <el-table-column
         label="环境"
-        prop="environment"
-        show-overflow-tooltip
+        prop="env"
       />
 
       <el-table-column
         label="IP"
-        prop="host"
+        prop="db_ip"
         show-overflow-tooltip
       />
 
       <el-table-column
         label="数据库类型"
-        prop="database_type"
+        prop="type"
         show-overflow-tooltip
       >
         <!-- <template slot-scope="{row}">
@@ -120,6 +124,7 @@ export default {
         asset_status: ''
       },
       tableData: [],
+
       total: 0,
       statusOptions: [],
       multipleSelection: [],
@@ -135,7 +140,22 @@ export default {
     // 获取服务器列表/搜索功能
     search() {
       getDatabases(this.form).then(res => {
-        this.tableData = res.data.results
+        const envList = {
+          0: '生产',
+          1: '测试',
+          2: '开发',
+          3: '演示'
+        }
+        const dbTypeList = {
+          0: 'mysql',
+          1: 'sqlserver'
+        }
+
+        this.tableData = res.data.results && res.data.results.map(t => {
+          t.env = envList[t.db_env]
+          t.type = dbTypeList[t.db_type]
+          return t
+        })
         // this.total = res.data.count
       })
     },

@@ -2,14 +2,14 @@
   <el-dialog :visible.sync="dialogVisible" :title="curId ? '编辑数据库' : '新增数据库'" width="720px" :before-close="close">
     <el-form ref="dbForm" inline label-position="left" :model="dbForm" status-icon :rules="rules" label-width="100px" class="demo-dbForm">
       <el-card shadow="never">
-        <el-form-item label="数据库名称" prop="database_name">
-          <el-input v-model="dbForm.database_name" clearable />
+        <el-form-item label="数据库名称" prop="db_name">
+          <el-input v-model="dbForm.db_name" clearable />
         </el-form-item>
         <!-- <el-form-item label="环境" prop="environment">
           <el-input v-model="dbForm.environment" clearable />
         </el-form-item> -->
         <el-form-item label="环境">
-          <el-select v-model="dbForm.environment" clearable placeholder="选择环境">
+          <el-select v-model="dbForm.db_env" clearable placeholder="选择环境">
             <el-option
               v-for="item in envs"
               :key="item.value"
@@ -19,11 +19,11 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="IP" prop="host">
-          <el-input v-model="dbForm.host" clearable />
+        <el-form-item label="IP" prop="db_ip">
+          <el-input v-model="dbForm.db_ip" clearable />
         </el-form-item>
         <el-form-item label="数据库类型">
-          <el-select v-model="dbForm.database_type" clearable placeholder="选择数据库类型">
+          <el-select v-model="dbForm.db_type" clearable placeholder="选择数据库类型">
             <el-option
               v-for="item in dbTypeOptions"
               :key="item.value"
@@ -33,10 +33,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="数据库版本">
-          <el-input v-model="dbForm.version" clearable />
+          <el-input v-model="dbForm.db_version" clearable />
         </el-form-item>
-        <el-form-item label="用途" prop="">
-          <el-input v-model="dbForm.function" clearable />
+        <el-form-item label="备注" prop="db_mark">
+          <el-input v-model="dbForm.db_mark" clearable />
         </el-form-item>
       </el-card>
       <el-card shadow="never" />
@@ -45,21 +45,21 @@
         <div>
           <el-form-item
             label="用户名"
-            :prop="username"
+            :prop="db_username"
           >
-            <el-input v-model="dbForm.username" clearable />
+            <el-input v-model="dbForm.db_username" clearable />
           </el-form-item>
           <el-form-item
             label="密码"
-            :prop="password"
+            :prop="db_password"
           >
-            <el-input v-model="dbForm.password" clearable type="password" />
+            <el-input v-model="dbForm.db_password" clearable type="password" />
           </el-form-item>
           <el-form-item
             label="端口"
-            :prop="port"
+            :prop="db_port"
           >
-            <el-input v-model="dbForm.port" clearable />
+            <el-input v-model="dbForm.db_port" clearable />
           </el-form-item>
           <!-- <el-button @click.prevent="removeAccount(account)">删除</el-button> -->
         </div>
@@ -97,15 +97,15 @@ export default {
   data() {
     return {
       dbForm: {
-        database_name: '',
-        host: '',
-        environment: '',
-        database_version: '',
-        function: '',
-        username: '',
-        password: '',
-        port: '',
-        database_type: ''
+        db_name: '',
+        db_ip: '',
+        db_env: '',
+        db_version: '',
+        db_mark: '',
+        db_username: '',
+        db_password: '',
+        db_port: '',
+        db_type: ''
       },
       loading: false,
       adminOptions: [],
@@ -135,16 +135,16 @@ export default {
       ],
       serverSystemOptions: [],
       rules: {
-        database_name: [{ required: true, trigger: 'blur', message: '数据库名称不能为空' }],
-        username: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
-        password: [{ required: true, trigger: 'blur', message: '密码不能为空' }],
-        port: [{ required: true, trigger: 'blur', message: '端口不能为空' }],
-        host: [
+        db_name: [{ required: true, trigger: 'blur', message: '数据库名称不能为空' }],
+        db_username: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
+        db_password: [{ required: true, trigger: 'blur', message: '密码不能为空' }],
+        db_port: [{ required: true, trigger: 'blur', message: '端口不能为空' }],
+        db_ip: [
           { required: true, trigger: 'blur', message: 'Ip不能为空' },
           { validator: validateIP, trigger: 'blur' }
         ],
-        environment: [{ required: true, trigger: 'blur', message: '环境不能为空' }],
-        database_type: [{ required: true, trigger: 'blur', message: '类型不能为空' }]
+        db_env: [{ required: true, trigger: 'blur', message: '环境不能为空' }],
+        db_type: [{ required: true, trigger: 'blur', message: '类型不能为空' }]
       }
     }
   },

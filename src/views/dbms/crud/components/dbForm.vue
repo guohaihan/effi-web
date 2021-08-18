@@ -156,8 +156,8 @@ export default {
   data() {
     return {
       ruleForm: {
-        name: '',
-        manage_ip: '',
+        db_name: '',
+        db_ip: '',
         admin: null,
         cabinet: null,
         expire_day: null,

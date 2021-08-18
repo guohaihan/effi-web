@@ -112,23 +112,23 @@ export default {
       dbTypeOptions: [],
       envs: [
         {
-          value: 0,
+          value: '0',
           label: '生产'
         },
         {
-          value: 1,
+          value: '1',
           label: '测试'
         },
         {
-          value: 2,
+          value: '2',
           label: '开发'
         },
         {
-          value: 3,
+          value: '3',
           label: '演示'
         },
         {
-          value: 4,
+          value: '4',
           label: '验收'
         }
 
@@ -154,6 +154,7 @@ export default {
         if (this.curId) {
           getDatabase(this.curId).then(res => {
             this.dbForm = res.data
+            console.log(this.dbForm)
             // if (res.data.admin) {
             //   this.adminOptions = [{ id: res.data.admin, username: res.data.admin_display }]
             // }

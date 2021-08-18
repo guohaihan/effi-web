@@ -49,7 +49,10 @@
               <span>{{ props.row.db_mark }}</span>
             </el-form-item>
             <el-form-item label="用户">
-              <span>{{ props.row.db_username }}/{{ props.row.db_port }}   </span>
+              <span>{{ props.row.db_username }}</span>
+            </el-form-item>
+            <el-form-item label="端口">
+              <span>{{ props.row.db_port }}   </span>
             </el-form-item>
           </el-form>
         </template>
@@ -72,15 +75,19 @@
       />
 
       <el-table-column
-        label="数据库类型"
-        prop="type"
+        label="用户名"
+        prop="db_username"
         show-overflow-tooltip
-      >
-        <!-- <template slot-scope="{row}">
+      />
+      <el-table-column
+        label="端口"
+        prop="db_port"
+        show-overflow-tooltip
+      />
+      <!-- <template slot-scope="{row}">
           <el-tag v-if="row.server.server_type==='pm'" effect="plain">{{ row.server.server_type_display }}</el-tag>
           <el-tag v-else type="success" effect="plain">{{ row.server.server_type_display }}</el-tag>
         </template> -->
-      </el-table-column>
 
       <el-table-column
         fixed="right"

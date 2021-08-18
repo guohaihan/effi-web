@@ -12,7 +12,7 @@ export function createDatabase(data) {
 // 删除数据库
 export function deleteDatabase(id) {
   return request({
-    url: `/${id}/`,
+    url: `/dbms/db/${id}/`,
     method: 'delete'
   })
 }

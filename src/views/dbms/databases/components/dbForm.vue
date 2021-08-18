@@ -2,13 +2,13 @@
   <el-dialog :visible.sync="dialogVisible" :title="curId ? '编辑数据库' : '新增数据库'" width="720px" :before-close="close">
     <el-form ref="dbForm" inline label-position="left" :model="dbForm" status-icon :rules="rules" label-width="100px" class="demo-dbForm">
       <el-card shadow="never">
-        <el-form-item label="数据库名称" prop="db_name">
+        <el-form-item label="连接名称" prop="db_name">
           <el-input v-model="dbForm.db_name" clearable />
         </el-form-item>
         <!-- <el-form-item label="环境" prop="environment">
           <el-input v-model="dbForm.environment" clearable />
         </el-form-item> -->
-        <el-form-item label="环境">
+        <el-form-item label="环境" prop="db_env">
           <el-select v-model="dbForm.db_env" clearable placeholder="选择环境">
             <el-option
               v-for="item in envs"
@@ -22,7 +22,7 @@
         <el-form-item label="IP" prop="db_ip">
           <el-input v-model="dbForm.db_ip" clearable />
         </el-form-item>
-        <el-form-item label="数据库类型">
+        <el-form-item label="数据库类型" prop="db_type">
           <el-select v-model="dbForm.db_type" clearable placeholder="选择数据库类型">
             <el-option
               v-for="item in dbTypeOptions"
@@ -39,29 +39,29 @@
           <el-input v-model="dbForm.db_mark" clearable />
         </el-form-item>
       </el-card>
-      <el-card shadow="never" />
+      <!-- <el-card shadow="never" /> -->
       <el-card shadow="never">
         <!-- <div v-for="(account, index) in dbForm.accounts" :key="index"> -->
         <div>
           <el-form-item
             label="用户名"
-            :prop="db_username"
+            prop="db_username"
           >
             <el-input v-model="dbForm.db_username" clearable />
           </el-form-item>
           <el-form-item
             label="密码"
-            :prop="db_password"
+            prop="db_password"
           >
             <el-input v-model="dbForm.db_password" clearable type="password" />
           </el-form-item>
           <el-form-item
             label="端口"
-            :prop="db_port"
+            prop="db_port"
           >
             <el-input v-model="dbForm.db_port" clearable />
           </el-form-item>
-          <!-- <el-button @click.prevent="removeAccount(account)">删除</el-button> -->
+        <!-- <el-button @click.prevent="removeAccount(account)">删除</el-button> -->
         </div>
         <!-- <el-button @click="addAccount">新增账户</el-button> -->
       </el-card>

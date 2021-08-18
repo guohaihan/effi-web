@@ -26,7 +26,7 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="数据库名称">
+            <el-form-item label="连接名称">
               <span>{{ props.row.db_name }}</span>
             </el-form-item>
             <el-form-item label="环境">

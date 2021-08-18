@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form ref="form" :model="form" inline>
       <el-form-item prop="search">
-        <el-input v-model="form.search" clearable style="width:320px" prefix-icon="el-icon-search" placeholder="输入数据库名称、IP搜索" />
+        <el-input v-model="form.search" clearable style="width:320px" prefix-icon="el-icon-search" placeholder="输入连接名称、IP搜索" />
       </el-form-item>
       <el-form-item>
         <el-button type="success" icon="el-icon-search" size="medium" @click="search(form)">搜索</el-button>
@@ -55,7 +55,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="数据库名称"
+        label="连接名称"
         prop="db_name"
         min-width="100"
         show-overflow-tooltip
@@ -120,8 +120,7 @@ export default {
         page: 1,
         size: 10,
         search: '',
-        ordering: '',
-        asset_status: ''
+        ordering: ''
       },
       tableData: [],
 
@@ -156,7 +155,7 @@ export default {
           t.type = dbTypeList[t.db_type]
           return t
         })
-        // this.total = res.data.count
+        this.total = res.data.count
       })
     },
     // 重置

@@ -314,9 +314,9 @@ export const asyncRoutes = [
       },
       {
 
-        path: 'crud',
-        component: () => import('@/views/dbms/crud'),
-        name: 'dbms-crud',
+        path: 'sqlExcute',
+        component: () => import('@/views/dbms/sqlExcute'),
+        name: 'dbms-sqlExcute',
         meta: {
           title: '数据库执行',
           icon: 'skill',

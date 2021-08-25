@@ -2,26 +2,21 @@
   <div class="sql-excute">
     <!-- 左侧 -->
     <div class="sql-excute-left">
-      <span class="s-e-l-title">搜索：</span>
+      <span class="s-e-l-title">数据库 </span>
       <el-select
-        v-model="value"
-        multiple
-        filterable
-        remote
-        reserve-keyword
-        placeholder="请输入关键词"
-        :remote-method="remoteMethod"
-        :loading="loading"
+        v-model="selectValue"
+        placeholder="请选择连接"
+        @change="selectionChange"
       >
         <el-option
           v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          :key="item.id"
+          :label="item.db_name"
+          :value="item.id"
         />
       </el-select>
       <div class="sql-excute-margin" />
-      <el-aside width="300px" style="background-color: rgb(238, 241, 246)">
+      <el-aside width="400px" style="background-color: rgb(238, 241, 246)">
         <el-table
           ref="multipleTable"
           :data="tableData"
@@ -29,16 +24,16 @@
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55" />
+          <el-table-column type="selection" width="45" />
           <el-table-column
-            prop="address"
+            prop="Database"
             label="数据库列表"
             show-overflow-tooltip
           />
         </el-table>
         <div style="margin-top: 20px">
-          <el-button @click="toggleSelection()">取消选择</el-button>
-          <el-button @click="toggleSelection()">取消选择</el-button>
+          <el-button @click="getDbs">刷新列表</el-button>
+          <!-- <el-button @click="toggleSelection()">取消选择</el-button> -->
         </div>
       </el-aside>
     </div>
@@ -47,9 +42,8 @@
       <div class="s-e-r-input">
         <span class="s-e-r-input-title">sql执行</span>
         <el-input
-          v-model="textarea"
+          v-model="text"
           placeholder="请输入内容"
-          show-word-limit
           type="textarea"
         />
         <el-upload
@@ -72,14 +66,87 @@
             type="success"
             @click="submitUpload"
           >上传到服务器</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="excuteSql"
+          >执行</el-button>
           <div slot="tip" class="el-upload__tip">
-            只能上传jpg/png文件，且不超过500kb
+            只能上传.sql文件
           </div>
         </el-upload>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+import { sqlExcute, getDBNames } from '@/api/dbms/sqlExcute'
+import { getDatabases } from '@/api/dbms/databases'
+// import { methods } from 'vue-echarts'
+
+export default {
+
+  data() {
+    return {
+      sql: '',
+      tableData: [],
+      text: '',
+      dbNames: [],
+      options: [],
+      selectValue: null,
+      multipleSelection: []
+    }
+  },
+  created() {
+    this.getDBConnNames()
+  },
+  methods: {
+    getDBConnNames() {
+      getDatabases().then(res => {
+        this.options = res.data.results
+        this.selectValue = this.options[0]?.id
+        if (this.selectValue) this.getDbs()
+      })
+    },
+    selectionChange() {
+      this.getDbs()
+    },
+    getDbs() {
+      getDBNames(this.selectValue).then(res => {
+        if (res.data) {
+          this.tableData = res.data
+        }
+      })
+      console.log(this.databases)
+    },
+    excuteSql() {
+      const list = []
+      // console.log(this.multipleSelection.length)
+      var i
+      for (i = 0; i < this.multipleSelection.length; i++) {
+        list.push(this.multipleSelection[i].Database)
+      }
+      var dataSql = { 'db_name': list, 'operate_sql': this.text }
+      sqlExcute(this.selectValue, dataSql).then(res => {
+        console.log(this.text)
+        console.log(res.data)
+      })
+    },
+    getDbNames() {
+      const names = []
+      this.$refs.table.selection.forEach(data => names.push(data.Database))
+      this.dbNames = names
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      // console.log(this.multipleSelection[0])
+    }
+  }
+
+}
+</script>
+
 <style>
 /*   <!-- 左侧 --> */
 .sql-excute-left {
@@ -92,6 +159,7 @@
 .s-e-l-title {
   font-size: 16px;
   display: inline-block;
+  margin-right: 20px;
 }
  /* <!-- 右侧 --> */
 .sql-excute-rigth {
@@ -113,7 +181,4 @@
   margin-bottom: 20px;
 }
 </style>
-<script>
-
-</script>
 

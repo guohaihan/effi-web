@@ -1,18 +1,19 @@
 import request from '@/utils/request'
 
-// 获取资产状态列表
-export function getAssetsStatus() {
+// 获取数据库列表
+export function getDBNames(id) {
   return request({
-    url: '/cmdb/assets/status/',
+    url: `/dbms/operates/databases/${id}/`,
     method: 'get'
   })
 }
 
-// 获取资产管理员
-export function getAssetsAdmin(data) {
+// 执行sql
+export function sqlExcute(id, data) {
   return request({
-    url: `/cmdb/assets/admin/?search=${data}`,
-    method: 'get'
+    url: `/dbms/operates/databases/${id}/`,
+    method: 'post',
+    data
   })
 }
 

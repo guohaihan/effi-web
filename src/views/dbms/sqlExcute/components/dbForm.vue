@@ -132,7 +132,7 @@
 </template>
 <script>
 import { createDatabase, updateDatabase, getDatabase, getDatabaseType } from '@/api/dbms/databases'
-import { getAssetsAdmin, getIDCCabinetsTree } from '@/api/dbms/assets'
+import { getAssetsAdmin, getIDCCabinetsTree } from '@/api/dbms/sqlExcute'
 import { validateIP } from '@/utils/rulesValidate'
 export default {
   name: 'DbForm',

@@ -85,6 +85,14 @@ import { sqlExcute, getDBNames } from '@/api/dbms/sqlExcute'
 import { getDatabases } from '@/api/dbms/databases'
 // import { methods } from 'vue-echarts'
 
+const CodeMirror = require('codemirror/lib/codemirror')
+require('codemirror/addon/edit/matchbrackets')
+require('codemirror/addon/selection/active-line')
+require('codemirror/mode/sql/sql')
+require('codemirror/addon/hint/show-hint')
+require('codemirror/addon/hint/sql-hint')
+import sqlFormatter from 'sql-formatter'
+
 export default {
 
   data() {
@@ -101,6 +109,29 @@ export default {
   created() {
     this.getDBConnNames()
   },
+  // mounted() {
+  //   const mime = 'text/x-mariadb'
+  //   // let theme = 'ambiance'//设置主题，不设置的会使用默认主题
+  //   this.editor = CodeMirror.fromTextArea(this.$refs.mycode, {
+  //     mode: mime, // 选择对应代码编辑器的语言，我这边选的是数据库，根据个人情况自行设置即可
+  //     indentWithTabs: true,
+  //     smartIndent: true,
+  //     lineNumbers: true,
+  //     matchBrackets: true,
+  //     // theme: 'base16-light',
+  //     // autofocus: true,
+  //     extraKeys: { 'Ctrl': 'autocomplete' }, // 自定义快捷键
+  //     hintOptions: { // 自定义提示选项
+  //       tables: {
+  //         users: ['1112', '123123', '124124'],
+  //         countries: ['124', '124124', '1']
+  //       }
+  //     }
+  //   })
+  //   this.editor.on('cursorActivity', () => {
+  //     this.editor.showHint()
+  //   })
+  // },
   methods: {
     getDBConnNames() {
       getDatabases().then(res => {
@@ -148,10 +179,14 @@ export default {
 </script>
 
 <style>
+/* @import url('codemirror/theme/ambiance.css');
+@import url('codemirror/lib/codemirror.css');
+@import url('codemirror/addon/hint/show-hint.css'); */
+
 /*   <!-- 左侧 --> */
 .sql-excute-left {
   margin: 20px;
-  float: left;
+  /* float: left; */
 }
 .sql-excute-margin {
   margin-top: 20px;
@@ -163,7 +198,7 @@ export default {
 }
  /* <!-- 右侧 --> */
 .sql-excute-rigth {
-  float: left;
+  /* float: left; */
   margin-top: 20px;
 }
 .s-e-r-input-title {
@@ -172,12 +207,16 @@ export default {
   margin-bottom: 20px;
   display: block;
 }
+.sql-excute{
+  display: flex;
+}
 .s-e-r-input {
   margin-left: 30px;
 }
 .s-e-r-input .el-textarea__inner {
   min-height: 300px !important;
-  width: 68vw;
+
+  width: 56vw;
   margin-bottom: 20px;
 }
 </style>

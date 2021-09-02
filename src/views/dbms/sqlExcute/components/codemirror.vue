@@ -1,28 +1,17 @@
 <template>
-
   <codemirror
-
     ref="myCm"
-
     :value="editorValue"
-
     :options="cmOptions"
-
     @changes="onCmCodeChanges"
-
     @blur="onCmBlur"
-
     @keydown.native="onKeyDown"
-
     @mousedown.native="onMouseDown"
-
     @paste.native="OnPaste"
   />
-
 </template>
 
 <script>
-
 import { codemirror } from 'vue-codemirror'
 
 import 'codemirror/theme/blackboard.css'
@@ -116,24 +105,23 @@ import 'codemirror/addon/selection/mark-selection.js'
 import 'codemirror/addon/search/match-highlighter.js'
 
 export default {
-
   components: {
-
     codemirror
-
   },
 
   props: ['cmTheme', 'cmMode', 'autoFormatJson', 'jsonIndentation'],
 
   data() {
     return {
-
+      mode: 'sql',
       editorValue: '',
 
       cmOptions: {
-
-        theme: !this.cmTheme || this.cmTheme == 'default' ? 'blackboard' : this.cmTheme,
-        mode: !this.cmMode || this.cmMode == 'default' ? 'application/json' : this.cmMode,
+        theme:
+          !this.cmTheme || this.cmTheme === 'default'
+            ? 'blackboard'
+            : this.cmTheme,
+        mode: 'sql',
         lineWrapping: true,
         lineNumbers: true,
         autofocus: true,
@@ -145,16 +133,13 @@ export default {
           'Ctrl-Alt-L': () => {
             try {
               if (
-                this.cmOptions.mode == 'application/json' && this.editorValue
+                this.cmOptions.mode === 'application/json' &&
+                this.editorValue
               ) {
-                this.editorValue = this.formatStrInJson(
-                  this.editorValue
-                )
+                this.editorValue = this.formatStrInJson(this.editorValue)
               }
             } catch (e) {
-              this.$message.error(
-                '格式化代码出错：' + e.toString()
-              )
+              this.$message.error('格式化代码出错：' + e.toString())
             }
           }
         },
@@ -177,19 +162,24 @@ export default {
           showToken: true
         },
         styleSelectedText: true,
-        enableAutoFormatJson: this.autoFormatJson == null ? true : this.autoFormatJson,
-        defaultJsonIndentation: !this.jsonIndentation || typeof this.jsonIndentation !== typeof 1 ? 2 : this.jsonIndentation
-
+        enableAutoFormatJson:
+          this.autoFormatJson === null ? true : this.autoFormatJson,
+        defaultJsonIndentation:
+          !this.jsonIndentation || typeof this.jsonIndentation !== typeof 1
+            ? 2
+            : this.jsonIndentation
       },
-      enableAutoFormatJson: this.autoFormatJson == null ? true : this.autoFormatJson,
+      enableAutoFormatJson:
+        this.autoFormatJson === null ? true : this.autoFormatJson,
 
-      defaultJsonIndentation: !this.jsonIndentation || typeof this.jsonIndentation !== typeof 1 ? 2 : this.jsonIndentation
-
+      defaultJsonIndentation:
+        !this.jsonIndentation || typeof this.jsonIndentation !== typeof 1
+          ? 2
+          : this.jsonIndentation
     }
   },
 
   watch: {
-
     cmTheme: function(newValue, oldValue) {
       try {
         const theme = this.cmTheme === 'default' ? 'blackboard' : this.cmTheme
@@ -211,7 +201,6 @@ export default {
 
       this.resetFoldGutter()
     }
-
   },
 
   created() {
@@ -222,7 +211,7 @@ export default {
         return
       }
 
-      if (this.cmOptions.mode == 'application/json') {
+      if (this.cmOptions.mode === 'application/json') {
         if (!this.enableAutoFormatJson) {
           return
         }
@@ -237,7 +226,6 @@ export default {
   },
 
   methods: {
-
     resetLint() {
       if (!this.$refs.myCm.codemirror.getValue()) {
         this.$nextTick(() => {
@@ -272,11 +260,7 @@ export default {
           if (cm) {
             cm.style.cssText = style
           } else {
-            this.$message.error(
-
-              '未找到编辑器元素，修改编辑器样式失败'
-
-            )
+            this.$message.error('未找到编辑器元素，修改编辑器样式失败')
           }
         })
       } catch (e) {
@@ -303,16 +287,12 @@ export default {
     setValue(value) {
       try {
         if (typeof value !== typeof '') {
-          this.$message.error(
-
-            '修改编辑框内容失败：编辑宽内容只能为字符串'
-
-          )
+          this.$message.error('修改编辑框内容失败：编辑宽内容只能为字符串')
 
           return
         }
 
-        if (this.cmOptions.mode == 'application/json') {
+        if (this.cmOptions.mode === 'application/json') {
           this.editorValue = this.formatStrInJson(value)
         } else {
           this.editorValue = value
@@ -325,13 +305,11 @@ export default {
     // 黏贴事件处理函数
 
     OnPaste(event) {
-      if (this.cmOptions.mode == 'application/json') {
+      if (this.cmOptions.mode === 'application/json') {
         try {
           this.editorValue = this.formatStrInJson(this.editorValue)
         } catch (e) {
-
           // 啥都不做
-
         }
       }
     },
@@ -342,7 +320,7 @@ export default {
       try {
         const editorValue = cm.getValue()
 
-        if (this.cmOptions.mode == 'application/json' && editorValue) {
+        if (this.cmOptions.mode === 'application/json' && editorValue) {
           if (!this.enableAutoFormatJson) {
             return
           }
@@ -350,9 +328,7 @@ export default {
           this.editorValue = this.formatStrInJson(editorValue)
         }
       } catch (e) {
-
         // 啥也不做
-
       }
     },
 
@@ -361,9 +337,7 @@ export default {
     onKeyDown(event) {
       const keyCode = event.keyCode || event.which || event.charCode
 
-      const keyCombination =
-
-                event.ctrlKey || event.altKey || event.metaKey
+      const keyCombination = event.ctrlKey || event.altKey || event.metaKey
 
       if (!keyCombination && keyCode > 64 && keyCode < 123) {
         this.$refs.myCm.codemirror.showHint({ completeSingle: false })
@@ -386,40 +360,27 @@ export default {
 
     formatStrInJson(strValue) {
       return JSON.stringify(
-
         JSON.parse(strValue),
 
         null,
 
         this.defaultJsonIndentation
-
       )
     }
-
   }
-
 }
-
 </script>
 
 <style>
-
 .CodeMirror-selected {
-
-    background-color: blue !important;
-
+  background-color: blue !important;
 }
 
 .CodeMirror-selectedtext {
-
-    color: white !important;
-
+  color: white !important;
 }
 
 .cm-matchhighlight {
-
-    background-color: #ae00ae;
-
+  background-color: #ae00ae;
 }
-
 </style>

@@ -41,12 +41,15 @@
     <div class="sql-excute-rigth">
       <div class="s-e-r-input">
         <span class="s-e-r-input-title">sql执行</span>
-        <el-input
-          ref="mycode"
-          v-model="text"
-          placeholder="请输入内容"
-          type="textarea"
-        />
+        <div class="code-mirror-div">
+          <code-mirror-editor
+            ref="cmEditor"
+            :cm-theme="cmTheme"
+            :cm-mode="cmMode"
+            :auto-format-json="autoFormatJson"
+            :json-indentation="jsonIndentation"
+          />
+        </div>
         <el-upload
           ref="upload"
           class="upload-demo"
@@ -77,41 +80,6 @@
           </div>
         </el-upload>
       </div>
-    </div>
-    <div class="code-mirror-div">
-      <div class="tool-bar">
-        <span>请选择主题</span>
-        <el-select v-model="cmTheme" placeholder="请选择" size="small" style="width:150px">
-          <el-option v-for="item in cmThemeOptions" :key="item" :label="item" :value="item" />
-        </el-select>
-        <span style="margin-left: 10px">请选择编辑模式</span>
-        <el-select
-          v-model="cmEditorMode"
-          placeholder="请选择"
-          size="small"
-          style="width:150px"
-          @change="onEditorModeChange"
-        >
-          <el-option
-            v-for="item in cmEditorModeOptions"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-
-        </el-select>
-        <el-button type="primary" size="small" style="margin-left:10x" @click="setStyle">修改样式</el-button>
-        <el-button type="primary" size="small" style="margin-left:10x" @click="getValue">获取内容</el-button>
-        <el-button type="primary" size="small" style="margin-left:10x" @click="setValue">修改内容</el-button>
-      </div>
-      <code-mirror-editor
-        ref="cmEditor"
-        :cm-theme="cmTheme"
-        :cm-mode="cmMode"
-        :auto-format-json="autoFormatJson"
-        :json-indentation="jsonIndentation"
-      />
-
     </div>
 
   </div>
@@ -243,13 +211,15 @@ export default {
       console.log(this.databases)
     },
     excuteSql() {
+      // editorValue
+      const value = this.$refs.cmEditor.editorValue
       const list = []
       // console.log(this.multipleSelection.length)
-      var i
-      for (i = 0; i < this.multipleSelection.length; i++) {
-        list.push(this.multipleSelection[i].Database)
-      }
-      var dataSql = { 'db_name': list, 'operate_sql': this.text }
+      // var i
+      // for (i = 0; i < this.multipleSelection.length; i++) {
+      //   list.push(this.multipleSelection[i].Database)
+      // }
+      var dataSql = { 'db_name': list, 'operate_sql': value }
       sqlExcute(this.selectValue, dataSql).then(res => {
         console.log(this.text)
         console.log(res.data)
@@ -373,18 +343,9 @@ export default {
     overflow-y: auto;
 }
 .code-mirror-div {
-
-    position: absolute;
-    top: 0px;
-    left: 2px;
-    right: 5px;
-    bottom: 0px;
-    padding: 2px;
-    .tool-bar {
-        top: 20px;
-        margin: 30px 2px 0px 20px;
-    }
-
+width: 60vw;
+margin-bottom: 40px;
+// height: 1000px;
 }
 
 </style>

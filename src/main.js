@@ -33,6 +33,12 @@ import permission from '@/directive/permission/index.js'
 //   mockXHR()
 // }
 
+import VueCodeMirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import jshint from 'jshint'
+window.JSHINT = jshint.JSHINT
+
+Vue.use(VueCodeMirror)
 Vue.use(permission)
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size

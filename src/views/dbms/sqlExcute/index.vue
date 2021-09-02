@@ -42,6 +42,7 @@
       <div class="s-e-r-input">
         <span class="s-e-r-input-title">sql执行</span>
         <el-input
+          ref="mycode"
           v-model="text"
           placeholder="请输入内容"
           type="textarea"
@@ -77,26 +78,139 @@
         </el-upload>
       </div>
     </div>
+    <div class="code-mirror-div">
+      <div class="tool-bar">
+        <span>请选择主题</span>
+        <el-select v-model="cmTheme" placeholder="请选择" size="small" style="width:150px">
+          <el-option v-for="item in cmThemeOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <span style="margin-left: 10px">请选择编辑模式</span>
+        <el-select
+          v-model="cmEditorMode"
+          placeholder="请选择"
+          size="small"
+          style="width:150px"
+          @change="onEditorModeChange"
+        >
+          <el-option
+            v-for="item in cmEditorModeOptions"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+
+        </el-select>
+        <el-button type="primary" size="small" style="margin-left:10x" @click="setStyle">修改样式</el-button>
+        <el-button type="primary" size="small" style="margin-left:10x" @click="getValue">获取内容</el-button>
+        <el-button type="primary" size="small" style="margin-left:10x" @click="setValue">修改内容</el-button>
+      </div>
+      <code-mirror-editor
+        ref="cmEditor"
+        :cm-theme="cmTheme"
+        :cm-mode="cmMode"
+        :auto-format-json="autoFormatJson"
+        :json-indentation="jsonIndentation"
+      />
+
+    </div>
+
   </div>
 </template>
 
 <script>
 import { sqlExcute, getDBNames } from '@/api/dbms/sqlExcute'
 import { getDatabases } from '@/api/dbms/databases'
-// import { methods } from 'vue-echarts'
-
-const CodeMirror = require('codemirror/lib/codemirror')
-require('codemirror/addon/edit/matchbrackets')
-require('codemirror/addon/selection/active-line')
-require('codemirror/mode/sql/sql')
-require('codemirror/addon/hint/show-hint')
-require('codemirror/addon/hint/sql-hint')
-import sqlFormatter from 'sql-formatter'
-
+import CodeMirrorEditor from './components/codemirror.vue'
 export default {
+  components: {
+    CodeMirrorEditor
+  },
 
   data() {
     return {
+      cmTheme: 'default',
+      cmThemeOpthions: [
+        'default',
+        '3024-day',
+        '3024-night',
+        'abcdef',
+        'ambiance',
+        'ayu-dark',
+        'ayu-mirage',
+        'base16-dark',
+        'base16-light',
+        'bespin',
+        'blackboard',
+        'cobalt',
+        'colorforth',
+        'darcula',
+        'dracula',
+        'duotone-dark',
+        'duotone-light',
+        'eclipse',
+        'elegant',
+        'erlang-dark',
+        'gruvbox-dark',
+        'hopscotch',
+        'icecoder',
+        'idea',
+        'isotope',
+        'lesser-dark',
+        'liquibyte',
+        'lucario',
+        'material',
+        'material-darker',
+        'material-palenight',
+        'material-ocean',
+        'mbo',
+        'mdn-like',
+        'midnight',
+        'monokai',
+        'moxer',
+        'neat',
+        'neo',
+        'night',
+        'nord',
+        'oceanic-next',
+        'panda-syntax',
+        'paraiso-dark',
+        'paraiso-light',
+        'pastel-on-dark',
+        'railscasts',
+        'rubyblue',
+        'seti',
+        'shadowfox',
+        'solarized dark',
+        'solarized light',
+        'the-matrix',
+        'tomorrow-night-bright',
+        'tomorrow-night-eighties',
+        'ttcn',
+        'twilight',
+        'vibrant-ink',
+        'xq-dark',
+        'xq-light',
+        'yeti',
+        'yonce',
+        'zenburn'
+
+      ],
+      cmEditorMode: 'default',
+      cmEditorModeOptions: [
+        'default',
+        'json',
+        'sql',
+        'javascript',
+        'css',
+        'xml',
+        'html',
+        'yaml',
+        'markdown',
+        'python'
+      ],
+      cmMode: 'application/json',
+      jsonIndentation: 2,
+      autoFormatJson: true,
       sql: '',
       tableData: [],
       text: '',
@@ -109,29 +223,6 @@ export default {
   created() {
     this.getDBConnNames()
   },
-  // mounted() {
-  //   const mime = 'text/x-mariadb'
-  //   // let theme = 'ambiance'//设置主题，不设置的会使用默认主题
-  //   this.editor = CodeMirror.fromTextArea(this.$refs.mycode, {
-  //     mode: mime, // 选择对应代码编辑器的语言，我这边选的是数据库，根据个人情况自行设置即可
-  //     indentWithTabs: true,
-  //     smartIndent: true,
-  //     lineNumbers: true,
-  //     matchBrackets: true,
-  //     // theme: 'base16-light',
-  //     // autofocus: true,
-  //     extraKeys: { 'Ctrl': 'autocomplete' }, // 自定义快捷键
-  //     hintOptions: { // 自定义提示选项
-  //       tables: {
-  //         users: ['1112', '123123', '124124'],
-  //         countries: ['124', '124124', '1']
-  //       }
-  //     }
-  //   })
-  //   this.editor.on('cursorActivity', () => {
-  //     this.editor.showHint()
-  //   })
-  // },
   methods: {
     getDBConnNames() {
       getDatabases().then(res => {
@@ -172,13 +263,65 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       // console.log(this.multipleSelection[0])
+    },
+    onEditorModeChange(value) {
+      switch (value) {
+        case 'json':
+          this.cmMode = 'application/json'
+          break
+        case 'sql':
+          this.cmMode = 'sql'
+          break
+        case 'javascript':
+          this.cmMode = 'javascript'
+          break
+        case 'xml':
+          this.cmMode = 'xml'
+          break
+        case 'css':
+          this.cmMode = 'css'
+          break
+        case 'html':
+          this.cmMode = 'htmlmixed'
+          break
+        case 'yaml':
+          this.cmMode = 'yaml'
+          break
+        case 'markdown':
+          this.cmMode = 'markdown'
+          break
+        case 'python':
+          this.cmMode = 'python'
+          break
+        default:
+          this.cmMode = 'application/json'
+      }
+    },
+    setStyle() {
+      const styleStr = 'position: absolute; top: 80px; left: 50px; right: 200px; bottom: 20px; padding: 2px; height: auto;'
+      this.$refs.cmEditor.setStyle(styleStr)
+    },
+    getValue() {
+      const content = this.$refs.cmEditor.getValue()
+
+      console.log(content)
+    },
+    setValue() {
+      const jsonValue = {
+        name: 'laiyu',
+        addr: '广东省深圳市',
+        other: 'nothing',
+        tel: '168888888',
+        intro: [{ item1: 'item1' }]
+      }
+      this.$refs.cmEditor.setValue(JSON.stringify(jsonValue))
     }
   }
 
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 /* @import url('codemirror/theme/ambiance.css');
 @import url('codemirror/lib/codemirror.css');
 @import url('codemirror/addon/hint/show-hint.css'); */
@@ -219,5 +362,30 @@ export default {
   width: 56vw;
   margin-bottom: 20px;
 }
+.CodeMirror {
+    position: absolute;
+    top: 80px;
+    left: 2px;
+    right: 5px;
+    bottom: 0px;
+    padding: 2px;
+    height: auto;
+    overflow-y: auto;
+}
+.code-mirror-div {
+
+    position: absolute;
+    top: 0px;
+    left: 2px;
+    right: 5px;
+    bottom: 0px;
+    padding: 2px;
+    .tool-bar {
+        top: 20px;
+        margin: 30px 2px 0px 20px;
+    }
+
+}
+
 </style>
 

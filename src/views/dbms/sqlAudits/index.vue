@@ -4,7 +4,7 @@
       <el-col :span="17">
         <span class="s-title">审核状态</span>
         <el-select
-          v-model="status"
+          v-model="form.status"
           placeholder="请选择"
           @change="statusChange"
         >
@@ -39,11 +39,11 @@
               width="55"
             />
             <el-table-column
-              prop="ip"
+              prop="db_name"
               label="连接名"
             />
             <el-table-column
-              prop="update_time"
+              prop="sprint"
               label="主题"
             />
             <el-table-column
@@ -55,7 +55,7 @@
               label="更新时间"
             />
             <el-table-column
-              prop="update_time"
+              prop="user"
               label="提交人"
             />
             <el-table-column
@@ -65,11 +65,6 @@
               width="220"
             >
               <template slot-scope="{row}">
-                <!-- <el-button-group>
-                  <el-button type="primary" icon="el-icon-edit" />
-                  <el-button type="primary" icon="el-icon-share" />
-                  <el-button type="primary" icon="el-icon-delete" />
-                </el-button-group> -->
                 <el-button type="primary" icon="el-icon-tickets" size="mini" @click="getInfo()" />
                 <!-- <el-button type="success" round>成功按钮</el-button> -->
                 <el-button v-permission="['admin','monitor-ip-update']" type="success" icon="el-icon-check" size="mini" @click="pass(row)" />
@@ -96,7 +91,7 @@
 <script>
 import cuForm from './components/rejectForm'
 
-import { getIps, deleteIps } from '@/api/monitor/ip'
+import { getAuditsList } from '@/api/dbms/sqlAudits'
 export default {
   name: 'Roles',
   components: { cuForm },
@@ -105,7 +100,7 @@ export default {
       form: {
         page: 1,
         size: 10,
-        search: ''
+        status: '0'
       },
       statusOptions: [
         {
@@ -126,12 +121,11 @@ export default {
       multipleSelection: [],
       // cuForm数据
       cuDialogVisible: false,
-      curId: null,
-      status: '0'
+      curId: null
     }
   },
   created() {
-    this.search()
+    this.statusChange()
   },
   methods: {
     // table选择框功能的change事件
@@ -141,12 +135,11 @@ export default {
       this.multipleSelection = deleteIds
     },
     statusChange() {
-
-    },
-    search() {
-      getIps(this.form).then(res => {
-        this.tableData = res.data.results
-        this.total = res.data.count
+      console.log(this.form.status)
+      getAuditsList(this.form).then(res => {
+        if (res.data) {
+          this.tableData = res.data.results
+        }
       })
     },
     // 单个通过审核
@@ -168,25 +161,16 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        deleteIps(this.multipleSelection).then(res => {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-          // 刷新table
-          this.search()
-        })
       })
     },
     // 分页
     handleSizeChange(val) {
       this.form.size = val
-      this.search()
+      this.statusChange()
     },
     handleCurrentChange(val) {
       this.form.page = val
-      this.search()
+      this.statusChange()
     },
     updateIp(row) {
       this.curId = row.id

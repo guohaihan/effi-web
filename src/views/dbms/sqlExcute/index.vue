@@ -261,15 +261,22 @@ export default {
         this.$message.error('请选择数据库')
         return
       }
+      if (this.title === '' || this.title === null || this.title === undefined) { // "",null,undefined
+        this.$message.error('请填写提交主题')
+        return
+      }
       if (value === '' || value === null || value === undefined) { // "",null,undefined
         this.$message.error('请输入sql')
         return
       }
 
-      var data_commit = { 'db': this.selectValue, 'excute_db_name': list, 'operate_sql': value, 'user': '', 'auditor': '', 'status': 0, 'reason': '' }
+      var data_commit = { 'db': this.selectValue, 'excute_db_name': list, 'operate_sql': value, 'user': '', 'auditor': '', 'status': 0, 'reason': '', 'sprint': this.title }
       auditsSql(data_commit).then(res => {
-        console.log(this.text)
-        console.log(res.data)
+        if (res.code === 201) {
+          this.$message.success('提交成功')
+        } else {
+          this.$message.error('提交失败')
+        }
       })
     },
     onEditorModeChange(value) {

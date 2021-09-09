@@ -9,11 +9,20 @@ export function getDBNames(id) {
 }
 
 // 执行sql
-export function sqlExcute(id, data) {
+export function sqlExcute(data) {
   return request({
-    url: `/dbms/operates/databases/${id}/`,
+    url: `/dbms/operates/databases/`,
     method: 'post',
     data
+  })
+}
+// 提交sql审核
+export function auditsSql(data) {
+  return request({
+    url: `/dbms/audits/`,
+    method: 'post',
+    data
+
   })
 }
 

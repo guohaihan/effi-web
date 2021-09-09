@@ -41,6 +41,7 @@
     <div class="sql-excute-rigth">
       <div class="s-e-r-input">
         <span class="s-e-r-input-title">sql执行</span>
+        <el-input v-model="title" clearable style="width:300px;margin-bottom:10px;" placeholder="请输入sql执行主题" />
         <div class="code-mirror-div">
           <code-mirror-editor
             ref="cmEditor"
@@ -50,7 +51,7 @@
             :json-indentation="jsonIndentation"
           />
         </div>
-        <el-upload
+        <!-- <el-upload
           ref="upload"
           class="upload-demo"
           action="https://jsonplaceholder.typicode.com/posts/"
@@ -58,8 +59,8 @@
           :on-remove="handleRemove"
           :file-list="fileList"
           :auto-upload="false"
-        >
-          <el-button
+        > -->
+        <!-- <el-button
             slot="trigger"
             size="small"
             type="primary"
@@ -69,16 +70,24 @@
             size="small"
             type="success"
             @click="submitUpload"
-          >上传到服务器</el-button>
-          <el-button
-            size="small"
-            type="primary"
-            @click="excuteSql"
-          >执行</el-button>
-          <div slot="tip" class="el-upload__tip">
+          >上传到服务器</el-button> -->
+
+        <el-button
+          size="small"
+          type="primary"
+          @click="commitSqlAudits"
+        >提交审核</el-button>
+        <el-button
+          v-permission="['admin','dbms-excute-sql']"
+          size="small"
+          type="primary"
+          @click="excuteSql"
+        >执行</el-button>
+
+        <!-- <div slot="tip" class="el-upload__tip">
             只能上传.sql文件
-          </div>
-        </el-upload>
+          </div> -->
+        <!-- </el-upload> -->
       </div>
     </div>
 
@@ -86,7 +95,7 @@
 </template>
 
 <script>
-import { sqlExcute, getDBNames } from '@/api/dbms/sqlExcute'
+import { sqlExcute, getDBNames, auditsSql } from '@/api/dbms/sqlExcute'
 import { getDatabases } from '@/api/dbms/databases'
 import CodeMirrorEditor from './components/codemirror.vue'
 export default {
@@ -163,7 +172,7 @@ export default {
         'zenburn'
 
       ],
-      cmEditorMode: 'default',
+      cmEditorMode: 'sql',
       cmEditorModeOptions: [
         'default',
         'json',
@@ -176,16 +185,20 @@ export default {
         'markdown',
         'python'
       ],
-      cmMode: 'application/json',
+      cmMode: 'sql',
       jsonIndentation: 2,
       autoFormatJson: true,
       sql: '',
       tableData: [],
       text: '',
+      title: '',
       dbNames: [],
       options: [],
       selectValue: null,
-      multipleSelection: []
+      multipleSelection: [],
+      rules: {
+        title: [{ required: true, trigger: 'blur', message: '主题不能为空' }]
+      }
     }
   },
   created() {
@@ -213,14 +226,15 @@ export default {
     excuteSql() {
       // editorValue
       const value = this.$refs.cmEditor.editorValue
+      // this.getDbNames()
       const list = []
-      // console.log(this.multipleSelection.length)
-      // var i
-      // for (i = 0; i < this.multipleSelection.length; i++) {
-      //   list.push(this.multipleSelection[i].Database)
-      // }
-      var dataSql = { 'db_name': list, 'operate_sql': value }
-      sqlExcute(this.selectValue, dataSql).then(res => {
+      console.log(this.multipleSelection.length)
+      var i
+      for (i = 0; i < this.multipleSelection.length; i++) {
+        list.push(this.multipleSelection[i].Database)
+      }
+      var dataSql = { 'data': { 'db': this.selectValue, 'db_name': list, 'operate_sql': value }}
+      sqlExcute(dataSql).then(res => {
         console.log(this.text)
         console.log(res.data)
       })
@@ -233,6 +247,30 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       // console.log(this.multipleSelection[0])
+    },
+    commitSqlAudits() {
+      // editorValue
+      const value = this.$refs.cmEditor.editorValue
+      // this.getDbNames()
+      const list = []
+      console.log(this.multipleSelection.length)
+      for (var i = 0; i < this.multipleSelection.length; i++) {
+        list.push(this.multipleSelection[i].Database)
+      }
+      if (list.length === 0) {
+        this.$message.error('请选择数据库')
+        return
+      }
+      if (value === '' || value === null || value === undefined) { // "",null,undefined
+        this.$message.error('请输入sql')
+        return
+      }
+
+      var data_commit = { 'db': this.selectValue, 'excute_db_name': list, 'operate_sql': value, 'user': '', 'auditor': '', 'status': 0, 'reason': '' }
+      auditsSql(data_commit).then(res => {
+        console.log(this.text)
+        console.log(res.data)
+      })
     },
     onEditorModeChange(value) {
       switch (value) {
@@ -275,17 +313,17 @@ export default {
       const content = this.$refs.cmEditor.getValue()
 
       console.log(content)
-    },
-    setValue() {
-      const jsonValue = {
-        name: 'laiyu',
-        addr: '广东省深圳市',
-        other: 'nothing',
-        tel: '168888888',
-        intro: [{ item1: 'item1' }]
-      }
-      this.$refs.cmEditor.setValue(JSON.stringify(jsonValue))
     }
+    // setValue() {
+    //   const jsonValue = {
+    //     name: 'laiyu',
+    //     addr: '广东省深圳市',
+    //     other: 'nothing',
+    //     tel: '168888888',
+    //     intro: [{ item1: 'item1' }]
+    //   }
+    //   this.$refs.cmEditor.setValue(JSON.stringify(jsonValue))
+    // }
   }
 
 }

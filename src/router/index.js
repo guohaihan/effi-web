@@ -307,7 +307,8 @@ export const asyncRoutes = [
         component: () => import('@/views/dbms/databases'),
         name: 'dbms-databases',
         meta: {
-          title: '数据库管理',
+          permissions: ['admin', 'dbms-manage'],
+          title: '连接管理',
           icon: 'database',
           noCache: true
         }
@@ -318,8 +319,21 @@ export const asyncRoutes = [
         component: () => import('@/views/dbms/sqlExcute'),
         name: 'dbms-sqlExcute',
         meta: {
-          title: '数据库执行',
+          permissions: ['admin', 'dbms-excute'],
+          title: 'SQL提交',
           icon: 'skill',
+          noCache: true
+        }
+      },
+      {
+
+        path: 'sqlAudits',
+        component: () => import('@/views/dbms/sqlAudits'),
+        name: 'dbms-sqlExcute',
+        meta: {
+          permissions: ['admin', 'dbms-audits'],
+          title: 'SQL审核',
+          icon: 'permission',
           noCache: true
         }
 

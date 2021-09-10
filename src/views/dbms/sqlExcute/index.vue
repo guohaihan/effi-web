@@ -321,16 +321,6 @@ export default {
 
       console.log(content)
     }
-    // setValue() {
-    //   const jsonValue = {
-    //     name: 'laiyu',
-    //     addr: '广东省深圳市',
-    //     other: 'nothing',
-    //     tel: '168888888',
-    //     intro: [{ item1: 'item1' }]
-    //   }
-    //   this.$refs.cmEditor.setValue(JSON.stringify(jsonValue))
-    // }
   }
 
 }

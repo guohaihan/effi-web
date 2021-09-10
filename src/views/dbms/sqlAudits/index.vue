@@ -17,10 +17,10 @@
         </el-select>
       </el-col>
     </el-row>
-    <el-row style="margin-top:20px">
+    <!-- <el-row style="margin-top:20px">
       <el-button v-permission="['admin','monitor-ip-add']" type="primary" style="margin-bottom:20px" size="medium" @click="createIp()">批量审核</el-button>
-      <el-button v-permission="['admin','monitor-ip-mdel']" type="danger" :disabled="multipleSelection.length ? false : true" size="medium" @click="deleteIps(form)">批量驳回</el-button>
-    </el-row>
+      <el-button v-permission="['admin','monitor-ip-mdel']" type="danger" :disabled="multipleSelection.length ? false : true" size="medium" @click="rejectAudits(form)">批量驳回</el-button>
+    </el-row> -->
     <el-row>
       <el-col>
         <el-card class="box-card">
@@ -65,10 +65,10 @@
               width="220"
             >
               <template slot-scope="{row}">
-                <el-button type="primary" icon="el-icon-tickets" size="mini" @click="getInfo()" />
+                <el-button type="primary" icon="el-icon-tickets" size="mini" @click="getInfo(row)" />
                 <!-- <el-button type="success" round>成功按钮</el-button> -->
-                <el-button v-permission="['admin','monitor-ip-update']" type="success" icon="el-icon-check" size="mini" @click="pass(row)" />
-                <el-button v-permission="['admin','monitor-ip-del']" type="danger" icon="el-icon-close" size="mini" @click="reject(row)" />
+                <el-button v-show="form.status==='0'" v-permission="['admin','monitor-ip-update']" type="success" icon="el-icon-check" size="mini" @click="pass(row)" />
+                <el-button v-show="form.status==='0'" v-permission="['admin','monitor-ip-del']" type="danger" icon="el-icon-close" size="mini" @click="reject(row)" />
               </template>
             </el-table-column>
           </el-table>
@@ -85,16 +85,18 @@
         </el-card>
       </el-col>
     </el-row>
-    <cuForm :dialog-visible="cuDialogVisible" :cur-id="curId" @close="close" @search="search" />
+    <cuForm :dialog-visible="cuDialogVisible" :cur-id="curId" @close="close" @refreshList="statusChange" />
+    <infoForm :dialog-visible="infoDialogVisible" :cur-id="infoId" @closeDialog="closeInfoDialog" />
   </div>
 </template>
 <script>
 import cuForm from './components/rejectForm'
+import infoForm from './components/infoForm'
 
-import { getAuditsList } from '@/api/dbms/sqlAudits'
+import { getAuditsList, sqlAudits } from '@/api/dbms/sqlAudits'
 export default {
   name: 'Roles',
-  components: { cuForm },
+  components: { cuForm, infoForm },
   data() {
     return {
       form: {
@@ -121,7 +123,9 @@ export default {
       multipleSelection: [],
       // cuForm数据
       cuDialogVisible: false,
-      curId: null
+      infoDialogVisible: false,
+      curId: null,
+      infoId: null
     }
   },
   created() {
@@ -130,9 +134,9 @@ export default {
   methods: {
     // table选择框功能的change事件
     handleSelectionChange() {
-      const deleteIds = []
-      this.$refs.multipleTable.selection.forEach(data => deleteIds.push(data.id))
-      this.multipleSelection = deleteIds
+      const ids = []
+      this.$refs.multipleTable.selection.forEach(data => ids.push(data.id))
+      this.multipleSelection = ids
     },
     statusChange() {
       console.log(this.form.status)
@@ -142,13 +146,27 @@ export default {
         }
       })
     },
+    getInfo(row) {
+      this.infoId = row.id
+      this.infoDialogVisible = true
+    },
     // 单个通过审核
     pass(row) {
+      var data = { status: '1' }
       this.$confirm('审核通过后会自动执行,是否继续', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then()
+      }).then(() => {
+        sqlAudits(row.id, data).then(res => {
+          if (res.code === 200) {
+            this.$message.success('审核成功')
+          } else {
+            this.$message.error('审核失败')
+          }
+          this.statusChange()
+        })
+      })
     },
     // 单个驳回
     reject(row) {
@@ -156,8 +174,8 @@ export default {
       this.cuDialogVisible = true
     },
     // 批量驳回
-    deleteIps() {
-      this.$confirm('此操作将从黑名单中移除选中IP' + ', 是否继续？', '提示', {
+    rejectAudits() {
+      this.$confirm('确定全部驳回' + ', 是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -172,13 +190,13 @@ export default {
       this.form.page = val
       this.statusChange()
     },
-    updateIp(row) {
-      this.curId = row.id
-      this.cuDialogVisible = true
-    },
     close() {
       this.cuDialogVisible = false
       this.curId = null
+    },
+    closeInfoDialog() {
+      this.infoDialogVisible = false
+      this.infoId = null
     }
   }
 }

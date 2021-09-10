@@ -10,11 +10,18 @@ export function getAuditsList(data) {
 }
 
 // 审核通过列表
-export function passSqlAudits(data) {
+export function sqlAudits(id, data) {
   return request({
-    url: `/dbms/audits/`,
-    method: 'update',
-    params: data
+    url: `/dbms/audits/${id}/`,
+    method: 'put',
+    data
   })
 }
 
+// 审核通过列表
+export function auditsInfo(id) {
+  return request({
+    url: `/dbms/audits/${id}/`,
+    method: 'get'
+  })
+}

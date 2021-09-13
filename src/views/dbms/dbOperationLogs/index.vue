@@ -40,23 +40,19 @@
             />
             <el-table-column
               prop="db_name"
-              label="连接名"
+              label="数据库名字"
             />
             <el-table-column
-              prop="sprint"
-              label="主题"
+              prop="env"
+              label="环境"
             />
             <el-table-column
               prop="create_time"
               label="创建时间"
             />
             <el-table-column
-              prop="update_time"
-              label="更新时间"
-            />
-            <el-table-column
-              prop="user"
-              label="提交人"
+              prop="sprint"
+              label="主题"
             />
             <el-table-column
               fixed="right"
@@ -94,6 +90,7 @@ import cuForm from './components/rejectForm'
 import infoForm from './components/infoForm'
 import { sqlExcute } from '@/api/dbms/sqlExcute'
 import { getAuditsList, sqlAudits, auditsInfo } from '@/api/dbms/sqlAudits'
+import { getOperationLogs } from '@/api/dbms/dbOperationLog'
 export default {
   name: 'Roles',
   components: { cuForm, infoForm },
@@ -102,7 +99,7 @@ export default {
       form: {
         page: 1,
         size: 10,
-        status: '0'
+        status: '1'
       },
       statusOptions: [
         {
@@ -130,9 +127,15 @@ export default {
     }
   },
   created() {
-    this.statusChange()
+    this.getLogs()
   },
   methods: {
+    getLogs() {
+      getOperationLogs(this.form).then(res => {
+        this.tableData = res.data.results
+        this.total = res.data.count
+      })
+    },
     // table选择框功能的change事件
     handleSelectionChange() {
       const ids = []

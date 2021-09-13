@@ -26,10 +26,3 @@ export function auditsSql(data) {
   })
 }
 
-// 获取机房机柜Tree结构数据
-export function getIDCCabinetsTree() {
-  return request({
-    url: '/cmdb/assets/cabinets/',
-    method: 'get'
-  })
-}

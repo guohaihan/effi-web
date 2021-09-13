@@ -42,14 +42,14 @@ module.exports = {
     },
     proxy: {
       '/dev/api': {
-        target: 'http://192.168.1.8:8769/',
+        target: 'http://127.0.0.1:8769/',
         changeOrigin: true,
         pathRewrite: {
           '^/dev/api': ''
         }
       }
-    },
-    after: require('./mock/mock-server.js')
+    }
+    // after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

@@ -9,7 +9,7 @@ export function getAuditsList(data) {
   })
 }
 
-// 审核通过列表
+// 审核通过
 export function sqlAudits(id, data) {
   return request({
     url: `/dbms/audits/${id}/`,

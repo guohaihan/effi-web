@@ -51,26 +51,6 @@
             :json-indentation="jsonIndentation"
           />
         </div>
-        <!-- <el-upload
-          ref="upload"
-          class="upload-demo"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :file-list="fileList"
-          :auto-upload="false"
-        > -->
-        <!-- <el-button
-            slot="trigger"
-            size="small"
-            type="primary"
-          >选取文件</el-button>
-          <el-button
-            style="margin-left: 10px"
-            size="small"
-            type="success"
-            @click="submitUpload"
-          >上传到服务器</el-button> -->
 
         <el-button
           size="small"
@@ -98,6 +78,7 @@
 import { sqlExcute, getDBNames, auditsSql } from '@/api/dbms/sqlExcute'
 import { getDatabases } from '@/api/dbms/databases'
 import CodeMirrorEditor from './components/codemirror.vue'
+import { getInfo } from '@/api/user'
 export default {
   components: {
     CodeMirrorEditor
@@ -196,6 +177,8 @@ export default {
       options: [],
       selectValue: null,
       multipleSelection: [],
+      production_id: null,
+      contain_admin: null,
       rules: {
         title: [{ required: true, trigger: 'blur', message: '主题不能为空' }]
       }
@@ -203,11 +186,19 @@ export default {
   },
   created() {
     this.getDBConnNames()
+    getInfo().then(res => {
+      this.contain_admin = res.data.permissions.indexOf('admin')
+      console.log(this.contain_admin)
+    })
   },
   methods: {
     getDBConnNames() {
       getDatabases().then(res => {
         this.options = res.data.results
+        for (let i = 0; i < this.options.length; i++) {
+          // console.log(this.options[i].db_env)
+          if (this.options[i].db_env === '0') this.production_id = this.options[i].id
+        }
         this.selectValue = this.options[0]?.id
         if (this.selectValue) this.getDbs()
       })
@@ -224,19 +215,35 @@ export default {
       console.log(this.databases)
     },
     excuteSql() {
+      // 获取用户信息
+
+      console.log(this.contain_admin + '------')
+      if (this.selectValue === this.production_id && this.contain_admin === -1) {
+        this.$message.error('您无权限执行生产')
+        return
+      }
+      console.log('无权限')
       // editorValue
       const value = this.$refs.cmEditor.editorValue
       // this.getDbNames()
       const list = []
       console.log(this.multipleSelection.length)
-      var i
-      for (i = 0; i < this.multipleSelection.length; i++) {
+
+      for (let i = 0; i < this.multipleSelection.length; i++) {
         list.push(this.multipleSelection[i].Database)
       }
-      var dataSql = { 'data': { 'db': this.selectValue, 'db_name': list, 'operate_sql': value }}
+      if (list.length === 0) {
+        this.$message.error('请选择数据库')
+        return
+      }
+      if (value === '' || value === null || value === undefined) { // "",null,undefined
+        this.$message.error('请输入sql')
+        return
+      }
+      var dataSql = { 'db': this.selectValue, 'excute_db_name': list, 'operate_sql': value }
       sqlExcute(dataSql).then(res => {
-        console.log(this.text)
-        console.log(res.data)
+        // console.log(this.text)
+        // console.log(res.data)
       })
     },
     getDbNames() {
@@ -274,6 +281,10 @@ export default {
       auditsSql(data_commit).then(res => {
         if (res.code === 201) {
           this.$message.success('提交成功')
+          this.title = ''
+          this.$refs.cmEditor.editorValue = ''
+          this.$refs.multipleTable.clearSelection()
+          this.$router.push('/dbms/sqlAudits')
         } else {
           this.$message.error('提交失败')
         }

@@ -149,145 +149,146 @@ export const asyncRoutes = [
         icon: 'dept',
         noCache: true
       }
-    },
-    {
-      path: 'jobs',
-      component: () => import('@/views/system/jobs'),
-      name: 'system-jobs',
-      meta: {
-        permissions: ['admin', 'system-jobs'],
-        title: '任务调度',
-        icon: 'task -2',
-        noCache: true
-      }
-    },
-    {
-      path: 'env',
-      component: () => import('@/views/system/jobs'),
-      name: 'system-jobs',
-      meta: {
-        permissions: ['admin', 'system-jobs'],
-        title: '环境设置',
-        icon: 'ip',
-        noCache: true
-      }
     }
+    // },
+    // {
+    //   path: 'jobs',
+    //   component: () => import('@/views/system/jobs'),
+    //   name: 'system-jobs',
+    //   meta: {
+    //     permissions: ['admin', 'system-jobs'],
+    //     title: '任务调度',
+    //     icon: 'task -2',
+    //     noCache: true
+    //   }
+    // },
+    // {
+    //   path: 'env',
+    //   component: () => import('@/views/system/jobs'),
+    //   name: 'system-jobs',
+    //   meta: {
+    //     permissions: ['admin', 'system-jobs'],
+    //     title: '环境设置',
+    //     icon: 'ip',
+    //     noCache: true
+    //   }
+    // }
     ]
   },
 
   // 系统监控
-  {
-    path: '/monitor',
-    component: Layout,
-    redirect: 'noRedirect',
-    alwaysShow: true,
-    name: 'monitor',
-    meta: {
-      permissions: ['admin', 'monitor'],
-      title: '系统监控',
-      icon: 'monitor'
-    },
-    children: [{
-      path: 'users',
-      component: () => import('@/views/monitor/users'),
-      name: 'monitor-users',
-      meta: {
-        permissions: ['admin', 'monitor-users'],
-        title: '在线用户',
-        icon: 'Steve-Jobs',
-        noCache: true
-      }
-    },
-    {
-      path: 'ip',
-      component: () => import('@/views/monitor/ip'),
-      name: 'monitor-ip',
-      meta: {
-        permissions: ['admin', 'monitor-ip'],
-        title: 'IP黑名单',
-        icon: 'ipvisits',
-        noCache: true
-      }
-    },
-    // {
-    //   path: 'crud',
-    //   component: () => import('@/views/monitor/crud'),
-    //   name: 'monitor-crud',
-    //   meta: { permissions: ['admin', 'monitor-crud'], title: 'crud日志', icon: 'log', noCache: true }
-    // },
-    {
-      path: 'error',
-      component: () => import('@/views/monitor/error'),
-      name: 'monitor-error',
-      meta: {
-        permissions: ['admin', 'monitor-error'],
-        title: '错误日志',
-        icon: 'error',
-        noCache: true
-      }
-    },
-    {
-      path: 'service',
-      component: () => import('@/views/monitor/service'),
-      name: 'monitor-service',
-      meta: {
-        permissions: ['admin', 'monitor-service'],
-        title: '服务监控',
-        icon: 'codeConsole',
-        noCache: true
-      }
-    }
-    ]
-  },
+  // {
+  //   path: '/monitor',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   alwaysShow: true,
+  //   name: 'monitor',
+  //   meta: {
+  //     permissions: ['admin', 'monitor'],
+  //     title: '系统监控',
+  //     icon: 'monitor'
+  //   },
+  //   children: [{
+  //     path: 'users',
+  //     component: () => import('@/views/monitor/users'),
+  //     name: 'monitor-users',
+  //     meta: {
+  //       permissions: ['admin', 'monitor-users'],
+  //       title: '在线用户',
+  //       icon: 'Steve-Jobs',
+  //       noCache: true
+  //     }
+  //   },
+  //   {
+  //     path: 'ip',
+  //     component: () => import('@/views/monitor/ip'),
+  //     name: 'monitor-ip',
+  //     meta: {
+  //       permissions: ['admin', 'monitor-ip'],
+  //       title: 'IP黑名单',
+  //       icon: 'ipvisits',
+  //       noCache: true
+  //     }
+  //   },
+  //   // {
+  //   //   path: 'crud',
+  //   //   component: () => import('@/views/monitor/crud'),
+  //   //   name: 'monitor-crud',
+  //   //   meta: { permissions: ['admin', 'monitor-crud'], title: 'crud日志', icon: 'log', noCache: true }
+  //   // },
+  //   {
+  //     path: 'error',
+  //     component: () => import('@/views/monitor/error'),
+  //     name: 'monitor-error',
+  //     meta: {
+  //       permissions: ['admin', 'monitor-error'],
+  //       title: '错误日志',
+  //       icon: 'error',
+  //       noCache: true
+  //     }
+  //   },
+  //   {
+  //     path: 'service',
+  //     component: () => import('@/views/monitor/service'),
+  //     name: 'monitor-service',
+  //     meta: {
+  //       permissions: ['admin', 'monitor-service'],
+  //       title: '服务监控',
+  //       icon: 'codeConsole',
+  //       noCache: true
+  //     }
+  //   }
+  //   ]
+  // },
 
   // 资产管理
-  {
-    path: '/cmdb',
-    component: Layout,
-    redirect: 'noRedirect',
-    alwaysShow: true,
-    name: 'cmdb',
-    meta: {
-      permissions: ['admin', 'cmdb'],
-      title: '资产管理',
-      icon: 'resources'
-    },
-    children: [{
-      path: 'server',
-      component: () => import('@/views/cmdb/servers'),
-      name: 'cmdb-servers',
-      meta: {
-        permissions: ['admin', 'cmdb-servers'],
-        title: '服务器',
-        icon: 'server',
-        noCache: true
-      }
-    }
+  // {
+  //   path: '/cmdb',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   alwaysShow: true,
+  //   name: 'cmdb',
+  //   meta: {
+  //     permissions: ['admin', 'cmdb'],
+  //     title: '资产管理',
+  //     icon: 'resources'
+  //   },
+  // children: [{
+  //   path: 'server',
+  //   component: () => import('@/views/cmdb/servers'),
+  //   name: 'cmdb-servers',
+  //   meta: {
+  //     permissions: ['admin', 'cmdb-servers'],
+  //     title: '服务器',
+  //     icon: 'server',
+  //     noCache: true
+  //   }
+  // }
 
-    // {
-    //   path: 'database',
-    //   component: () => import('@/views/cmdb/databases'),
-    //   name: 'cmdb-databases',
-    //   meta: {
-    //     title: '数据库',
-    //     icon: 'database',
-    //     noCache: true
-    //   }
-    // }
-      // {
-      //   path: 'storage',
-      //   component: () => import('@/views/monitor/error'),
-      //   name: 'cmdb-storage',
-      //   meta: { title: '存储设备', icon: 'storage', noCache: true }
-      // },
-      // {
-      //   path: 'security',
-      //   component: () => import('@/views/monitor/service'),
-      //   name: 'cmdb-security',
-      //   meta: { title: '安全设备', icon: 'security', noCache: true }
-      // }
-    ]
-  },
+  // {
+  //   path: 'database',
+  //   component: () => import('@/views/cmdb/databases'),
+  //   name: 'cmdb-databases',
+  //   meta: {
+  //     title: '数据库',
+  //     icon: 'database',
+  //     noCache: true
+  //   }
+  // }
+  // {
+  //   path: 'storage',
+  //   component: () => import('@/views/monitor/error'),
+  //   name: 'cmdb-storage',
+  //   meta: { title: '存储设备', icon: 'storage', noCache: true }
+  // },
+  // {
+  //   path: 'security',
+  //   component: () => import('@/views/monitor/service'),
+  //   name: 'cmdb-security',
+  //   meta: { title: '安全设备', icon: 'security', noCache: true }
+  // }
+  //   ]
+  // },
 
   // 数据库系统
   {
@@ -337,6 +338,19 @@ export const asyncRoutes = [
           noCache: true
         }
 
+      },
+      {
+
+        path: 'logs',
+        component: () => import('@/views/dbms/dbOperationLogs'),
+        name: 'dbms-logs',
+        meta: {
+          permissions: ['admin', 'dbms-logs'],
+          title: 'SQL执行日志',
+          icon: 'permission',
+          noCache: true
+        }
+
       }
     // {
     //   path: 'storage',
@@ -375,32 +389,23 @@ export const asyncRoutes = [
         icon: 'swagger',
         noCache: true
       }
-    },
-    {
-      path: '',
-      name: '',
-      meta: {
-        title: '数据库',
-        icon: 'database',
-        noCache: true
-      }
     }
 
     ]
   },
 
-  // git外链
-  {
-    path: '/git-link',
-    component: Layout,
-    children: [{
-      path: 'https://github.com/TianPangJi/drf_admin',
-      meta: {
-        title: 'Git',
-        icon: 'github'
-      }
-    }]
-  },
+  // // git外链
+  // {
+  //   path: '/git-link',
+  //   component: Layout,
+  //   children: [{
+  //     path: 'https://github.com/TianPangJi/drf_admin',
+  //     meta: {
+  //       title: 'Git',
+  //       icon: 'github'
+  //     }
+  //   }]
+  // },
 
   // icon
   {

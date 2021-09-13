@@ -7,64 +7,103 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            待审核
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="waitCount" :duration="1" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
+          <svg-icon icon-class="monitor" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            审核通过
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="passCount" :duration="1" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('purchases')">
         <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
+          <svg-icon icon-class="lock" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Purchases
+            审核驳回
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="rejectCount" :duration="1" class="card-panel-num" />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <!-- <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('shoppings')">
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Shoppings
+            审核驳回
           </div>
           <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
         </div>
       </div>
-    </el-col>
+    </el-col> -->
   </el-row>
 </template>
 
 <script>
 import CountTo from 'vue-count-to'
+import { getAuditsList } from '@/api/dbms/sqlAudits'
 
 export default {
+
   components: {
     CountTo
+  },
+  data() {
+    return {
+      form: {
+        page: 1,
+        size: 9999,
+        status: '0'
+      },
+      waitCount: 0,
+      passCount: 0,
+      rejectCount: 0
+
+    }
+  },
+  created() {
+    this.getWaitCount()
+    this.getPassCount()
+    this.getRejectCount()
   },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    getWaitCount() {
+      getAuditsList(this.form).then(res => {
+        this.waitCount = res.data.count
+      })
+    },
+    getPassCount() {
+      const param = Object.assign({}, this.form)
+      param.status = '1'
+      getAuditsList(param).then(res => {
+        this.passCount = res.data.count
+      })
+    },
+    getRejectCount() {
+      const param = Object.assign({}, this.form)
+      param.status = '2'
+      getAuditsList(param).then(res => {
+        this.rejectCount = res.data.count
+      })
     }
   }
 }

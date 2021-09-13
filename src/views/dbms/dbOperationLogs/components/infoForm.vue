@@ -2,24 +2,17 @@
   <el-dialog :visible.sync="dialogVisible" title="提交详情" width="700px" :before-close="close">
     <ul class="m-p-ul">
       <li>
-        <span class="bold">连接名称:</span>
+        <span class="bold">数据库名称:</span>
         <p>{{ recordList.db_name }}</p>
       </li>
       <li>
-        <span class="bold">数据库列表: 共{{ tableData.length }}个数据库</span>
-        <!-- <p>{{ recordList.excute_db_name }}</p> -->
-        <el-table
-          :data="tableData"
-          height="250"
-          border
-          style="width: 100%;margin-top:10px"
-        >
-          <el-table-column
-            prop="database"
-            label="数据库"
-            width="400px"
-          />
-        </el-table>
+        <span class="bold">执行用户:</span>
+        <p>{{ recordList.performer }}</p>
+      </li>
+      <li>
+        <span class="bold">执行结果:</span>
+        <p v-if="recordList.status===0">失败</p>
+        <p v-else>成功</p>
       </li>
       <li>
         <span class="bold">提交的sql:</span>
@@ -31,20 +24,14 @@
         />
       </li>
       <li>
-        <span class="bold">审核状态:</span>
-        <p v-if="recordList.status===0">待审核</p>
-        <p v-else-if="recordList.status===1">审核通过</p>
-        <p v-else>审核驳回</p>
-      </li>
-      <li v-show="recordList.status===2">
-        <span class="bold">驳回原因:</span>
-        <p>{{ recordList.reason }}</p>
+        <span class="bold">执行信息:</span>
+        <p>{{ recordList.error_info }}</p>
       </li>
     </ul>
   </el-dialog></template>
 <script>
 import CodeMirrorEditor from './codemirror.vue'
-import { auditsInfo } from '@/api/dbms/sqlAudits'
+import { getOperationLog } from '@/api/dbms/dbOperationLog'
 export default {
   name: 'InfoDialog',
   components: {
@@ -67,8 +54,7 @@ export default {
       sql: '',
       cmTheme: 'default',
       cmEditorMode: 'sql',
-      cmMode: 'sql',
-      tableData: []
+      cmMode: 'sql'
     }
   },
   watch: {
@@ -83,30 +69,13 @@ export default {
   methods: {
     close() {
       this.$emit('closeDialog')
-      this.tableData = []
     },
     getInfo() {
-      auditsInfo(this.curId).then(res => {
+      getOperationLog(this.curId).then(res => {
         this.recordList = res.data
-        let obj = {}
-        for (var i = 0; i < (res.data.excute_db_name).length; i++) {
-          obj = { 'database': res.data.excute_db_name[i] }
-          this.tableData.push(obj)
-          obj = {}
-        }
-        console.log(this.tableData)
-        this.sql = this.recordList.operate_sql
+        this.sql = this.recordList.operate_sql.substring(2, this.recordList.operate_sql.length - 2)
         this.setValue()
       })
-    },
-    changeDisabled(data, disabled) {
-      for (let index = 0; index < data.length; index++) {
-        const children = data[index].children
-        if (children !== undefined) {
-          this.changeDisabled(children, disabled)
-        }
-        data[index].disabled = disabled
-      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()

@@ -347,7 +347,7 @@ export const asyncRoutes = [
         meta: {
           permissions: ['admin', 'dbms-logs'],
           title: 'SQL执行日志',
-          icon: 'permission',
+          icon: 'log',
           noCache: true
         }
 

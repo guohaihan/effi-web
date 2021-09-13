@@ -9,3 +9,10 @@ export function getOperationLogs(data) {
     params: data
   })
 }
+
+export function getOperationLog(id) {
+  return request({
+    url: `/dbms/operates/logs/${id}/`,
+    method: 'get'
+  })
+}

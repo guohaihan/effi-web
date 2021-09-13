@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <el-row>
+    <el-row style="margin-bottom:20px">
       <el-col :span="17">
-        <span class="s-title">审核状态</span>
+        <span class="s-title">执行状态</span>
         <el-select
           v-model="form.status"
           placeholder="请选择"
-          @change="statusChange"
+          @change="getLogs"
         >
           <el-option
             v-for="st in statusOptions"
@@ -17,22 +17,17 @@
         </el-select>
       </el-col>
     </el-row>
-    <!-- <el-row style="margin-top:20px">
-      <el-button v-permission="['admin','monitor-ip-add']" type="primary" style="margin-bottom:20px" size="medium" @click="createIp()">批量审核</el-button>
-      <el-button v-permission="['admin','monitor-ip-mdel']" type="danger" :disabled="multipleSelection.length ? false : true" size="medium" @click="rejectAudits(form)">批量驳回</el-button>
-    </el-row> -->
     <el-row>
       <el-col>
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>审核列表</span>
+            <span>执行列表</span>
           </div>
           <el-table
             ref="multipleTable"
             :data="tableData"
             style="width: 100%"
             highlight-current-row
-            @selection-change="handleSelectionChange"
           >
             <el-table-column
               type="selection"
@@ -61,10 +56,7 @@
               width="220"
             >
               <template slot-scope="{row}">
-                <el-button type="primary" icon="el-icon-tickets" size="mini" @click="getInfo(row)" />
-                <!-- <el-button type="success" round>成功按钮</el-button> -->
-                <el-button v-show="form.status==='0'" v-permission="['admin','monitor-ip-update']" type="success" icon="el-icon-check" size="mini" @click="pass(row)" />
-                <el-button v-show="form.status==='0'" v-permission="['admin','monitor-ip-del']" type="danger" icon="el-icon-close" size="mini" @click="reject(row)" />
+                <el-button type="primary" icon="el-icon-tickets" size="middle" @click="getInfo(row)">执行详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -81,47 +73,35 @@
         </el-card>
       </el-col>
     </el-row>
-    <cuForm :dialog-visible="cuDialogVisible" :cur-id="curId" @close="close" @refreshList="statusChange" />
     <infoForm :dialog-visible="infoDialogVisible" :cur-id="infoId" @closeDialog="closeInfoDialog" />
   </div>
 </template>
 <script>
-import cuForm from './components/rejectForm'
 import infoForm from './components/infoForm'
-import { sqlExcute } from '@/api/dbms/sqlExcute'
-import { getAuditsList, sqlAudits, auditsInfo } from '@/api/dbms/sqlAudits'
 import { getOperationLogs } from '@/api/dbms/dbOperationLog'
 export default {
   name: 'Roles',
-  components: { cuForm, infoForm },
+  components: { infoForm },
   data() {
     return {
       form: {
         page: 1,
         size: 10,
-        status: '1'
+        status: '0'
       },
       statusOptions: [
         {
           value: '0',
-          label: '待审核'
+          label: '失败'
         },
         {
           value: '1',
-          label: '已通过'
-        },
-        {
-          value: '2',
-          label: '已驳回'
+          label: '成功'
         }
       ],
       tableData: [],
       total: 0,
-      multipleSelection: [],
-      // cuForm数据
-      cuDialogVisible: false,
       infoDialogVisible: false,
-      curId: null,
       infoId: null,
       detailData: null
     }
@@ -136,70 +116,9 @@ export default {
         this.total = res.data.count
       })
     },
-    // table选择框功能的change事件
-    handleSelectionChange() {
-      const ids = []
-      this.$refs.multipleTable.selection.forEach(data => ids.push(data.id))
-      this.multipleSelection = ids
-    },
-    statusChange() {
-      getAuditsList(this.form).then(res => {
-        if (res.data) {
-          this.tableData = res.data.results
-          this.total = res.data.count
-        }
-      })
-    },
     getInfo(row) {
       this.infoId = row.id
       this.infoDialogVisible = true
-    },
-    getDetailData(row) {
-      return auditsInfo(row.id).then(res => {
-        if (res.data) {
-          return res.data
-        }
-      })
-    },
-    // 单个通过审核
-    pass(row) {
-      var data = { status: '1' }
-      this.getDetailData(row).then((detailData) => {
-        this.$confirm('审核通过后会自动执行,是否继续', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          sqlAudits(row.id, data).then(res => {
-            if (res.code === 200) {
-              this.$message.success('审核成功')
-              sqlExcute(detailData).then(res => {
-                if (res.code === 200) {
-                  this.$message.success(res.data)
-                } else {
-                  this.$message.error(res.data)
-                }
-              })
-            } else {
-              this.$message.error('审核失败')
-            }
-            this.statusChange()
-          })
-        })
-      })
-    },
-    // 单个驳回
-    reject(row) {
-      this.curId = row.id
-      this.cuDialogVisible = true
-    },
-    // 批量驳回
-    rejectAudits() {
-      this.$confirm('确定全部驳回' + ', 是否继续？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
     },
     // 分页
     handleSizeChange(val) {
@@ -208,11 +127,6 @@ export default {
     },
     handleCurrentChange(val) {
       this.form.page = val
-      this.statusChange()
-    },
-    close() {
-      this.cuDialogVisible = false
-      this.curId = null
     },
     closeInfoDialog() {
       this.infoDialogVisible = false

@@ -73,7 +73,7 @@ export default {
     getInfo() {
       getOperationLog(this.curId).then(res => {
         this.recordList = res.data
-        this.sql = this.recordList.operate_sql.substring(2, this.recordList.operate_sql.length - 2)
+        this.sql = this.recordList.operate_sql
         this.setValue()
       })
     },

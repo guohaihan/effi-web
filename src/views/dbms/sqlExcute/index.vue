@@ -242,6 +242,7 @@ export default {
       }
       var dataSql = { 'db': this.selectValue, 'excute_db_name': list, 'operate_sql': value }
       sqlExcute(dataSql).then(res => {
+        this.$message.success(res.data)
         // console.log(this.text)
         // console.log(res.data)
       })

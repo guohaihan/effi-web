@@ -123,10 +123,11 @@ export default {
     // 分页
     handleSizeChange(val) {
       this.form.size = val
-      this.statusChange()
+      this.getLogs()
     },
     handleCurrentChange(val) {
       this.form.page = val
+      this.getLogs()
     },
     closeInfoDialog() {
       this.infoDialogVisible = false

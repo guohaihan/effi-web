@@ -214,7 +214,7 @@ export default {
           this.tableData = res.data
         }
       })
-      console.log(this.databases)
+      this.checked = false
     },
     getTenant() {
       if (this.checked) {

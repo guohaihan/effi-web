@@ -6,7 +6,7 @@
         <el-select
           v-model="form.status"
           placeholder="请选择"
-          @change="getLogs"
+          @change="getStatusChange"
         >
           <el-option
             v-for="st in statusOptions"
@@ -115,6 +115,10 @@ export default {
         this.tableData = res.data.results
         this.total = res.data.count
       })
+    },
+    getStatusChange() {
+      this.form.page = 1
+      this.getLogs()
     },
     getInfo(row) {
       this.infoId = row.id

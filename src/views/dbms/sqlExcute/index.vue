@@ -15,6 +15,7 @@
           :value="item.id"
         />
       </el-select>
+      <el-checkbox v-model="checked" style="margin-left:10px;" @change="getTenant">全租户库</el-checkbox>
       <div class="sql-excute-margin" />
       <el-aside width="400px" style="background-color: rgb(238, 241, 246)">
         <el-table
@@ -75,7 +76,7 @@
 </template>
 
 <script>
-import { sqlExcute, getDBNames, auditsSql } from '@/api/dbms/sqlExcute'
+import { sqlExcute, getSchemaNames, auditsSql, getTenantNames } from '@/api/dbms/sqlExcute'
 import { getDatabases } from '@/api/dbms/databases'
 import CodeMirrorEditor from './components/codemirror.vue'
 import { getInfo } from '@/api/user'
@@ -167,6 +168,7 @@ export default {
         'python'
       ],
       cmMode: 'sql',
+      checked: false,
       jsonIndentation: 2,
       autoFormatJson: true,
       sql: '',
@@ -207,12 +209,23 @@ export default {
       this.getDbs()
     },
     getDbs() {
-      getDBNames(this.selectValue).then(res => {
+      getSchemaNames(this.selectValue).then(res => {
         if (res.data) {
           this.tableData = res.data
         }
       })
       console.log(this.databases)
+    },
+    getTenant() {
+      if (this.checked) {
+        getTenantNames(this.selectValue).then(res => {
+          if (res.data) {
+            this.tableData = res.data
+          }
+        })
+      } else {
+        this.getDbs()
+      }
     },
     excuteSql() {
       // 获取用户信息

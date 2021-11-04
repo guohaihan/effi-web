@@ -1,5 +1,5 @@
 <template>
-  <div class="sql-excute">
+  <div v-loading="loading" class="sql-excute">
     <!-- 左侧 -->
     <div class="sql-excute-left">
       <span class="s-e-l-title">数据库 </span>
@@ -181,6 +181,7 @@ export default {
       multipleSelection: [],
       production_id: null,
       contain_admin: null,
+      loading: false,
       rules: {
         title: [{ required: true, trigger: 'blur', message: '主题不能为空' }]
       }
@@ -235,7 +236,6 @@ export default {
         this.$message.error('您无权限执行生产')
         return
       }
-      console.log('无权限')
       // editorValue
       const value = this.$refs.cmEditor.editorValue
       // this.getDbNames()
@@ -246,18 +246,21 @@ export default {
         list.push(this.multipleSelection[i].Database)
       }
       if (list.length === 0) {
-        this.$message.error('请选择数据库')
+        this.$message.warning('请选择数据库')
         return
       }
       if (value === '' || value === null || value === undefined) { // "",null,undefined
-        this.$message.error('请输入sql')
+        this.$message.warning('请输入sql')
         return
       }
+      this.loading = true
       var dataSql = { 'db': this.selectValue, 'excute_db_name': list, 'operate_sql': value }
       sqlExcute(dataSql).then(res => {
+        this.loading = false
         this.$message.success(res.data)
-        // console.log(this.text)
-        // console.log(res.data)
+      }).catch(e => {
+        this.$message.error(e)
+        this.loading = false
       })
     },
     getDbNames() {

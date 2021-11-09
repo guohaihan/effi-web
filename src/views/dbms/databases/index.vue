@@ -150,7 +150,8 @@ export default {
           0: '生产',
           1: '测试',
           2: '开发',
-          3: '演示'
+          3: '演示',
+          4: '验收'
         }
         const dbTypeList = {
           0: 'mysql',
